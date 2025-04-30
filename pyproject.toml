@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project]
+name = "wkc-concurrency-safety-test"
+version = "0.0.1"
+authors = [
+    { name="wilson choi", email="wilsonkichoi@gmail.com" },
+]
+description = "concurrency safety test"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Private :: Do Not Upload",
+]
+dynamic = ["dependencies", "optional-dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+optional-dependencies = {dev = { file = ["requirements-dev.txt"] }}
+
+[project.urls]
+"Homepage" = "https://github.com/wilsonkichoi/wkc-concurrency-safety-test"
+"Bug Tracker" = "https://github.com/wilsonkichoi/wkc-concurrency-safety-test/issues"
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = ""
+testpaths = [
+    "tests",
+]
