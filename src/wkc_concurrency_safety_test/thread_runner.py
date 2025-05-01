@@ -72,6 +72,13 @@ def run(func,
         test_size:int,
         print_debug:bool = False):
     """
+    Parameters:
+        func (callable): function to be tested
+        test_data (list[dict]): test data (see test_data format below)
+        thread_count (int): number of threads to use for testing
+        test_size (int): number of tests to run. test data will be shuffled and inflated (shrinked) to test_size.
+        print_debug (bool): whether to print debug messages
+
     test_data format:
     [
         {
