@@ -68,9 +68,9 @@ class Runner(threading.Thread):
 
 def run(func,
         test_data: list[dict],
-        thread_count:int,
-        test_size:int,
-        print_debug:bool = False):
+        thread_count: int,
+        test_size: int,
+        print_debug: bool = False):
     """
     Parameters:
         func (callable): function to be tested
@@ -79,16 +79,35 @@ def run(func,
         test_size (int): number of tests to run. test data will be shuffled and inflated (shrinked) to test_size.
         print_debug (bool): whether to print debug messages
 
-    test_data format:
-    [
-        {
-            'args': [args], # for the func
-            'kwargs': {kwargs}, # for the func
-            'expected_result': expected_result # (optional) 
-            'expected_output': lambda x: x['output'] == expected_output, # (optional)
-        },
-        ...
-    ]
+    Returns:
+        results (list): list of results
+        example:
+            [
+                {
+                    'worker_id': worker_id,
+                    'durations': durations,
+                    'inputs': inputs,
+                    'outputs': outputs,
+                    'expected_outputs': expected_outputs,
+                    'validation_funcs': validation_funcs,
+                    'validity_checks': validity_checks,
+                },
+                ...
+            ]
+        check concurrency safety:
+            all([all(result['validity_checks']) for result in results])
+
+    Note:
+        test_data format:
+        [
+            {
+                'args': [args], # for the func
+                'kwargs': {kwargs}, # for the func
+                'expected_output': expected_output # (optional if validation_func is provided)
+                'validation_func': lambda x: x['output'] == expected_output, # (optional if expected_output is provided)
+            },
+            ...
+        ]
     """
     event = threading.Event()
     input_queue = queue.Queue()

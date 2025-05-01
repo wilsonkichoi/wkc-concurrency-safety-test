@@ -11,14 +11,15 @@ Two main modules are
 - add doc string
 
 ### usage example
+
+#### import thread_runner
 ```
-import time
 from wkc_concurrency_safety_test import thread_runner
+```
 
-
-############################################################
-# non thread safe example
-############################################################
+#### non thread safe counter
+```
+import time 
 
 class Counter:
     def __init__(self):
@@ -34,11 +35,37 @@ class Counter:
         self.reset_counters()
         for _ in range(n):
             self.increment()
-            time.sleep(0)
+            time.sleep(0) # force context switch
 
         return self.counter
 
+```
 
+#### use thread_runner to test the counter
+
+the run funciton take the follow arguments
+- func (callable): function to be tested
+- test_data (list[dict]): test data (see test_data format below)
+- thread_count (int): number of threads to use for testing
+- test_size (int): number of tests to run. test data will be shuffled and inflated (shrinked) to test_size.
+- print_debug (bool): whether to print debug messages
+
+
+#### test_data format
+```
+[
+    {
+        'args': [args], # for the func
+        'kwargs': {kwargs}, # for the func
+        'expected_output': expected_output # (optional if validation_func is provided)
+        'validation_func': lambda x: x['output'] == expected_output, # (optional if expected_output is provided)
+    },
+    ...
+]
+```
+
+#### run test
+```
 counter = Counter()
 test_data = [{ 
                 'args': [10000],
@@ -47,13 +74,10 @@ test_data = [{
             }]
 results = thread_runner.run(counter.count_to_n, test_data, thread_count=9, test_size=77, print_debug=True)
 is_thread_safe = all([all(result['validity_checks']) for result in results])
+```
 
-
-
-############################################################
-# thread safe example
-############################################################
-
+#### test thread safe counter
+```
 from contextvars import ContextVar
 contextvar_counter = ContextVar("contextvar_counter", default=0)
 
